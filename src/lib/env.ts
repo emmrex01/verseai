@@ -15,6 +15,7 @@ export const env = {
   stripePrice: (plan: "author" | "pro" | "studio", interval: "month" | "year") =>
     required(`STRIPE_PRICE_${plan.toUpperCase()}_${interval === "month" ? "MONTHLY" : "YEARLY"}`),
   ipHashSalt: () => required("IP_HASH_SALT"),
+  adminEmails: () => (process.env.ADMIN_EMAILS ?? "").split(",").map((e) => e.trim().toLowerCase()).filter(Boolean),
   freeToolDailyBudgetUsd: () => Number(process.env.FREE_TOOL_DAILY_BUDGET_USD ?? "10"),
 };
 

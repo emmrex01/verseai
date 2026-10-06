@@ -10,7 +10,8 @@
     "worker": "tsx scripts/worker.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "brand": "node scripts/render-brand.mjs"
+    "brand": "node scripts/render-brand.mjs",
+    "eval": "tsx scripts/eval.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",

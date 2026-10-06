@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
-import { BookOpen, Clock, Gauge, LayoutDashboard, MapPin, MessagesSquare, Network, Settings, ShieldAlert, Users } from "lucide-react";
+import { BookOpen, Clock, FileText, Gauge, LayoutDashboard, MapPin, MessagesSquare, Network, Settings, ShieldAlert, Users } from "lucide-react";
 
 const SECTIONS = [
   {
@@ -28,6 +28,7 @@ const SECTIONS = [
       ["/issues", "Consistency", ShieldAlert],
       ["/pacing", "Pacing", Gauge],
       ["/ask", "Ask your book", MessagesSquare],
+      ["/report", "Editorial report", FileText],
     ],
   },
 ] as const;

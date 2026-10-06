@@ -62,16 +62,16 @@ export default async function BookOverviewPage({ params }: PageProps<"/app/books
 
       {runs.active && (
         <div className="mt-8">
-          <AnalysisProgress runId={runs.active.id} initial={runs.active} />
+          <AnalysisProgress runId={runs.active.id} initial={runs.active} kind={runs.active.kind} />
         </div>
       )}
-      {!runs.active && runs.latest?.status === "failed" && (
+      {!runs.active && runs.latestAnalysis?.status === "failed" && (
         <Card className="mt-8 border-critical/30 p-5 text-sm">
           <p className="font-medium">The last analysis didn&apos;t finish.</p>
-          <p className="mt-1 text-muted">{runs.latest.error}</p>
+          <p className="mt-1 text-muted">{runs.latestAnalysis.error}</p>
         </Card>
       )}
-      {!runs.active && !runs.latest && (
+      {!runs.active && !runs.latestAnalysis && (
         <Card className="mt-8 p-5 text-sm">
           <p className="font-medium">Your manuscript is uploaded but not analyzed yet.</p>
           <p className="mt-1 text-muted">Start an analysis to build your Story Bible and run the consistency check.</p>

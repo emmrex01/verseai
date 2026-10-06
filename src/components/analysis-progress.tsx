@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Check, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui";
 
-const STEPS = [
+const ANALYSIS_STEPS = [
   [3, "Reading manuscript"],
   [5, "Identifying chapters and scenes"],
   [40, "Mapping characters and places"],
@@ -13,6 +13,14 @@ const STEPS = [
   [70, "Building character profiles"],
   [78, "Checking timeline and consistency"],
   [92, "Saving your Story Bible"],
+] as const;
+
+const REPORT_STEPS = [
+  [5, "Reading your manuscript"],
+  [20, "Developmental editor: structure and stakes"],
+  [50, "Character editor: motivation and arcs"],
+  [75, "Reader perspective: where readers lean in or drift"],
+  [95, "Writing your report"],
 ] as const;
 
 interface RunStatus {
@@ -24,7 +32,8 @@ interface RunStatus {
 }
 
 /** Polls an analysis run and refreshes the page when it finishes. */
-export function AnalysisProgress({ runId, initial }: { runId: string; initial?: Partial<RunStatus> }) {
+export function AnalysisProgress({ runId, initial, kind = "analysis" }: { runId: string; initial?: Partial<RunStatus>; kind?: "analysis" | "report" }) {
+  const STEPS: readonly (readonly [number, string])[] = kind === "report" ? REPORT_STEPS : ANALYSIS_STEPS;
   const router = useRouter();
   const [run, setRun] = useState<RunStatus>({ status: "queued", stage: "Waiting to start", progress: 0, error: null, chapters_reused: 0, ...initial });
 
@@ -56,7 +65,7 @@ export function AnalysisProgress({ runId, initial }: { runId: string; initial?: 
   if (run.status === "failed") {
     return (
       <Card className="border-critical/30 p-6">
-        <p className="font-serif text-xl">The analysis didn&apos;t finish.</p>
+        <p className="font-serif text-xl">{kind === "report" ? "The report didn't finish." : "The analysis didn't finish."}</p>
         <p className="mt-2 text-sm text-muted">{run.error ?? "Something went wrong."} Your manuscript is saved — you can re-run the analysis from the overview.</p>
       </Card>
     );
@@ -64,7 +73,7 @@ export function AnalysisProgress({ runId, initial }: { runId: string; initial?: 
 
   return (
     <Card className="p-6" aria-live="polite">
-      <p className="font-serif text-2xl">{run.status === "succeeded" ? "Your book is ready." : "Building your book intelligence…"}</p>
+      <p className="font-serif text-2xl">{run.status === "succeeded" ? (kind === "report" ? "Your report is ready." : "Your book is ready.") : kind === "report" ? "Preparing your editorial report…" : "Building your book intelligence…"}</p>
       <p className="mt-1 text-sm text-muted">{run.status === "queued" ? "Queued — starting in a moment." : run.stage}. You can leave this page; we&apos;ll keep working.</p>
       <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-paper">
         <div className="h-full rounded-full bg-gold transition-all duration-700" style={{ width: `${Math.max(2, run.progress)}%` }} />

@@ -18,6 +18,9 @@ This repository is the **Manuscript Intelligence MVP** (blueprint §59): the fir
 | **Pacing** | Momentum chart, per-chapter tension/conflict/emotion/dialogue table, slow-chapter and no-turning-point notes, framed as recommendations. |
 | **Ask your book** | Search-backed Q&A. Answers say whether the text *establishes*, *implies* or *doesn't establish* something, with verified citations. Respects "by Chapter N". |
 | **Free-to-paid** | Books longer than the plan allows get their opening chapters analyzed (up to the plan limit), with an upgrade banner for the rest. |
+| **Editorial report** | Phase 2. A developmental edit of the whole manuscript from three perspectives (developmental editor, character editor, reader): overview, structure/clarity/character/pacing scores with rationale, priority revisions with verified evidence, strengths, story (or argument) structure beats, character notes, chapter-by-chapter reader experience, and a revision plan ordered by dependency. Download as PDF via a print stylesheet. Monthly allowance per plan. |
+| **Admin dashboard** | `/app/admin` for emails in `ADMIN_EMAILS`: users, conversion, estimated MRR, AI cost by feature and as a share of MRR, activation funnel, job health, failed runs, recent signups. |
+| **Accuracy eval** | `npm run eval` runs the full pipeline on `eval/fixtures/` manuscripts with planted contradictions and decoys, and reports recall, precision, false positives and cost per 100k words. |
 | **Billing** | Stripe Checkout, Customer Portal and webhook sync. Free / Author $15 / Pro $39 / Studio $99, with monthly word and question allowances. Paid plans get queue priority. |
 | **Privacy** | Row Level Security on every table, private storage bucket, delete a book with everything in it, no training on manuscripts. |
 
@@ -58,7 +61,7 @@ Analysis runs in a separate long-running worker, not in a web request: a full no
 ## Setup
 
 1. **Install:** `npm install`
-2. **Supabase:** create a project. Run `supabase/migrations/0001_init.sql` in the SQL editor, or use `supabase db push`. Under Authentication → Providers, enable Email and Google. Add `{SITE_URL}/auth/callback` to the allowed redirect URLs.
+2. **Supabase:** create a project. Run the files in `supabase/migrations/` in order (or `supabase db push`). Under Authentication → Providers, enable Email and Google. Add `{SITE_URL}/auth/callback` to the allowed redirect URLs.
 3. **Anthropic:** create an API key.
 4. **Stripe:** create three products (Author, Pro, Studio), each with a monthly and a yearly price. Add a webhook to `{SITE_URL}/api/stripe/webhook` for `customer.subscription.created|updated|deleted`. Enable the Customer Portal.
 5. **Env:** `cp .env.example .env.local` and fill it in.
@@ -74,23 +77,24 @@ Analysis runs in a separate long-running worker, not in a web request: a full no
 | Command | |
 | --- | --- |
 | `npm run dev` / `build` / `start` | Next.js |
-| `npm run worker` | Analysis worker |
+| `npm run worker` | Analysis and report worker |
+| `npm run eval` | Accuracy eval against `eval/fixtures/` (calls the API; costs a few cents per fixture) |
 | `npm test` | Unit tests (parser, evidence verification, graph linking, pacing, fingerprints) |
 | `npm run typecheck` / `lint` | TypeScript / ESLint |
 | `npm run brand` | Re-render the icon and Open Graph image from `public/brand/` |
 
 ## Before launch (not code — needs you)
 
-1. **Calibrate on real manuscripts.** Build a set of 5–10 manuscripts with known, planted contradictions. Measure precision (are flagged issues real?) and recall, then tune the prompts in `src/lib/analysis/checks.ts`. This matters more than any feature.
-2. **Measure cost per 100k words** from `analysis_runs.cost_usd` and confirm the plan allowances in `src/lib/plans.ts` keep healthy margins.
+1. **Calibrate on real manuscripts.** Run `npm run eval`. Then add 5–10 more fixtures (ideally real chapters from beta authors, with permission) to `eval/fixtures/`, each with a `.expected.json` listing planted contradictions and decoys. Tune the prompts in `src/lib/analysis/checks.ts` until recall and precision are where you want them, and bump `PIPELINE_VERSION` after prompt changes. This matters more than any feature.
+2. **Measure cost per 100k words**: the eval prints it, and `/app/admin` shows live cost as a share of MRR. Confirm the plan allowances in `src/lib/plans.ts` keep healthy margins.
 3. **Legal review** of `/terms` and `/privacy`. Confirm the zero-training and data-retention terms with your AI provider.
 4. **Real testimonials only.** The homepage shows no testimonials until you have real ones from beta authors.
 5. Set `NEXT_PUBLIC_CONTACT_EMAIL` to a mailbox you own.
 
 ## Roadmap (from the blueprint)
 
-- **Phase 2 — Editorial intelligence:** structure/beat analysis, themes, multi-perspective editorial review, PDF editorial report.
+- **Phase 2 — Editorial intelligence:** ✅ editorial report with structure beats. Next: themes, genre-specialist editors.
 - **Phase 3 — Publishing:** metadata and description generator, KDP/IngramSpark validation, EPUB and print PDF.
 - **Phase 4 — Marketing:** reader persona, launch planner, description optimizer.
-- **Phase 5 — Growth:** more free tools, topic-cluster content, comparison pages, Studio client workspaces, an admin dashboard (costs, conversion, failed jobs).
-- **Infra:** semantic retrieval (pgvector embeddings) alongside full-text search for Ask Your Book; analytics events for the activation funnel (first analysis completed → first issue viewed).
+- **Phase 5 — Growth:** more free tools, topic-cluster content, comparison pages, Studio client workspaces.
+- **Infra:** semantic retrieval (pgvector embeddings) alongside full-text search for Ask Your Book; product analytics events (e.g. first issue viewed) to complement the database-derived funnel.

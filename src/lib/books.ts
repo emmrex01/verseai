@@ -25,6 +25,7 @@ export interface Run {
   words_billed: number;
   version_id: string;
   chapter_limit: number | null;
+  kind: "analysis" | "report";
 }
 
 export async function getBook(supabase: SupabaseClient, bookId: string): Promise<Book> {
@@ -36,15 +37,17 @@ export async function getBook(supabase: SupabaseClient, bookId: string): Promise
 export async function getRuns(supabase: SupabaseClient, bookId: string) {
   const { data } = await supabase
     .from("analysis_runs")
-    .select("id, status, stage, progress, error, created_at, finished_at, chapters_reused, words_billed, version_id, chapter_limit")
+    .select("id, status, stage, progress, error, created_at, finished_at, chapters_reused, words_billed, version_id, chapter_limit, kind")
     .eq("book_id", bookId)
     .order("created_at", { ascending: false })
-    .limit(10);
+    .limit(30);
   const runs = (data ?? []) as Run[];
   return {
     latest: runs[0] ?? null,
     active: runs.find((r) => r.status === "queued" || r.status === "running") ?? null,
-    lastSucceeded: runs.find((r) => r.status === "succeeded") ?? null,
+    /** Latest finished analysis (not report). */
+    lastSucceeded: runs.find((r) => r.status === "succeeded" && r.kind === "analysis") ?? null,
+    latestAnalysis: runs.find((r) => r.kind === "analysis") ?? null,
   };
 }
 

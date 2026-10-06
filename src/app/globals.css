@@ -51,3 +51,23 @@ body {
   border-radius: 2px;
   scroll-margin-top: 120px;
 }
+
+/* Printing an editorial report: hide app chrome, keep the report. */
+@media print {
+  html,
+  body {
+    background: white;
+  }
+  header,
+  aside,
+  details,
+  .no-print {
+    display: none !important;
+  }
+  .print-page {
+    max-width: none !important;
+  }
+  .print-avoid-break {
+    break-inside: avoid;
+  }
+}

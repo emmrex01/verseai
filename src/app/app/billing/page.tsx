@@ -36,6 +36,7 @@ export default async function BillingPage({ searchParams }: PageProps<"/app/bill
         <div className="space-y-4">
           <Meter label="Words analyzed this month" value={allowance.wordsUsed} max={current.monthlyAnalysisWords} />
           <Meter label="Ask Your Book questions" value={allowance.questionsUsed} max={current.monthlyQuestions} />
+          <Meter label="Editorial reports" value={allowance.reportsUsed} max={current.monthlyReports} />
           <p className="text-xs text-muted">
             Books: {current.books === null ? "unlimited" : current.books} · Largest manuscript: {current.maxManuscriptWords.toLocaleString()} words
           </p>

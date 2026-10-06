@@ -17,6 +17,7 @@ async function main() {
   // Imported after env is loaded: model config is read at module load.
   const { createAdminClient } = await import("@/lib/supabase/admin");
   const { runAnalysis } = await import("@/lib/analysis/pipeline");
+  const { runReport } = await import("@/lib/analysis/report");
   const { AIError } = await import("@/lib/ai/client");
   const db = createAdminClient();
   console.log("[worker] started");
@@ -33,9 +34,10 @@ async function main() {
       continue;
     }
     const started = Date.now();
-    console.log(`[worker] run ${run.id} (book ${run.book_id}) attempt ${run.attempts}`);
+    console.log(`[worker] ${run.kind} ${run.id} (book ${run.book_id}) attempt ${run.attempts}`);
     try {
-      await runAnalysis(db, run);
+      if (run.kind === "report") await runReport(db, run);
+      else await runAnalysis(db, run);
       console.log(`[worker] run ${run.id} done in ${Math.round((Date.now() - started) / 1000)}s`);
     } catch (err) {
       const message = err instanceof AIError ? err.message : "Analysis failed unexpectedly. Please try again.";

@@ -11,7 +11,7 @@ export async function getUserPlan(db: SupabaseClient, userId: string): Promise<P
   return getPlan(active ? data.plan : "free");
 }
 
-export async function monthlyUsage(db: SupabaseClient, userId: string, kind: "analysis_words" | "question"): Promise<number> {
+export async function monthlyUsage(db: SupabaseClient, userId: string, kind: "analysis_words" | "question" | "report"): Promise<number> {
   const { data } = await db
     .from("usage_events")
     .select("quantity")
@@ -27,13 +27,16 @@ export interface Allowance {
   wordsRemaining: number;
   questionsUsed: number;
   questionsRemaining: number;
+  reportsUsed: number;
+  reportsRemaining: number;
 }
 
 export async function getAllowance(db: SupabaseClient, userId: string): Promise<Allowance> {
-  const [plan, wordsUsed, questionsUsed] = await Promise.all([
+  const [plan, wordsUsed, questionsUsed, reportsUsed] = await Promise.all([
     getUserPlan(db, userId),
     monthlyUsage(db, userId, "analysis_words"),
     monthlyUsage(db, userId, "question"),
+    monthlyUsage(db, userId, "report"),
   ]);
   return {
     plan,
@@ -41,6 +44,8 @@ export async function getAllowance(db: SupabaseClient, userId: string): Promise<
     wordsRemaining: Math.max(0, plan.monthlyAnalysisWords - wordsUsed),
     questionsUsed,
     questionsRemaining: Math.max(0, plan.monthlyQuestions - questionsUsed),
+    reportsUsed,
+    reportsRemaining: Math.max(0, plan.monthlyReports - reportsUsed),
   };
 }
 

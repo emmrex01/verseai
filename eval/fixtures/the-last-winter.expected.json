@@ -1,0 +1,76 @@
+{
+  "title": "The Last Winter",
+  "genre": "Mystery",
+  "notes": "Five planted contradictions Verse should find, and decoys it must not flag. `keywords`: an issue matches if its title, explanation or evidence contains at least `minKeywords` of them (case-insensitive) and its evidence cites every chapter in `chapters` (1-based).",
+  "expected": [
+    {
+      "id": "eye-color",
+      "description": "Sarah's eyes are bright green (Ch 1) but dark brown (Ch 3).",
+      "category": "character",
+      "keywords": ["eye", "green", "brown"],
+      "minKeywords": 2,
+      "chapters": [1, 3]
+    },
+    {
+      "id": "paris-history",
+      "description": "Sarah says she has never been to Paris (Ch 1) but lived in Montmartre for two years (Ch 4). Not framed as a lie.",
+      "category": "character",
+      "keywords": ["paris", "montmartre", "never been", "two years", "lived"],
+      "minKeywords": 2,
+      "chapters": [1, 4]
+    },
+    {
+      "id": "letter-postmark",
+      "description": "The letter arrives on March 10th but is postmarked March 12th (Ch 2).",
+      "category": "timeline",
+      "keywords": ["postmark", "march 10", "march 12", "letter"],
+      "minKeywords": 2,
+      "chapters": [2]
+    },
+    {
+      "id": "sibling-age",
+      "description": "Michael is three years younger (Ch 1) but 'older by two years' (Ch 3).",
+      "category": "character",
+      "keywords": ["older", "younger", "three years", "two years", "brother"],
+      "minKeywords": 2,
+      "chapters": [1, 3]
+    },
+    {
+      "id": "daniel-car",
+      "description": "Daniel drives a red pickup (Ch 1, 2) but says an old blue sedan is the only car he has ever owned (Ch 4).",
+      "category": "object",
+      "keywords": ["pickup", "sedan", "red", "blue", "car"],
+      "minKeywords": 2,
+      "chapters": [4]
+    }
+  ],
+  "optional": [
+    {
+      "id": "watch-at-station",
+      "description": "Daniel says Michael had the watch at the station (Ch 4), but Sarah found it left behind (Ch 1). This is a plot reveal, so flagging it is acceptable but not required.",
+      "keywords": ["watch"],
+      "minKeywords": 1,
+      "chapters": []
+    }
+  ],
+  "decoys": [
+    {
+      "id": "daniel-lie",
+      "description": "Daniel says he was home (Ch 1), then admits he lied and was at the station (Ch 2). Explicit lie — must not be flagged.",
+      "keywords": ["home", "station", "daniel"],
+      "minKeywords": 3
+    },
+    {
+      "id": "hair-dye",
+      "description": "Sarah's hair is brown, then black — she dyes it on the page (Ch 3).",
+      "keywords": ["hair", "black", "dye"],
+      "minKeywords": 2
+    },
+    {
+      "id": "rental-car",
+      "description": "Daniel drives a rented Peugeot in Paris — a rental, not a contradiction of his own car (though it sits next to the planted sedan contradiction).",
+      "keywords": ["peugeot", "rent"],
+      "minKeywords": 2
+    }
+  ]
+}

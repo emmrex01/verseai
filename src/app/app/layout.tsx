@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { requireUser } from "@/lib/supabase/server";
+import { env } from "@/lib/env";
 
 export const metadata: Metadata = { title: "Workspace", robots: { index: false, follow: false } };
 
 export default async function AppLayout({ children }: LayoutProps<"/app">) {
   const { user } = await requireUser();
+  const isAdmin = Boolean(user.email && env.adminEmails().includes(user.email.toLowerCase()));
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-30 border-b border-line bg-ivory/95 backdrop-blur">
@@ -23,6 +25,11 @@ export default async function AppLayout({ children }: LayoutProps<"/app">) {
               <Link href="/app/settings" className="hover:text-ink">
                 Settings
               </Link>
+              {isAdmin && (
+                <Link href="/app/admin" className="hover:text-ink">
+                  Admin
+                </Link>
+              )}
             </nav>
           </div>
           <div className="flex items-center gap-3 text-sm">

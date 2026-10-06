@@ -13,6 +13,8 @@ export interface Plan {
   /** Newly analyzed words per month. Unchanged chapters are free to re-analyze. */
   monthlyAnalysisWords: number;
   monthlyQuestions: number;
+  /** Full editorial reports per month. */
+  monthlyReports: number;
   features: string[];
 }
 
@@ -27,7 +29,8 @@ export const PLANS: Record<PlanId, Plan> = {
     maxManuscriptWords: 30_000,
     monthlyAnalysisWords: 30_000,
     monthlyQuestions: 15,
-    features: ["1 book — first 30,000 words analyzed", "Story Bible: characters, places, timeline", "Consistency check with evidence", "15 Ask Your Book questions / month"],
+    monthlyReports: 1,
+    features: ["1 book — first 30,000 words analyzed", "Story Bible: characters, places, timeline", "Consistency check with evidence", "15 Ask Your Book questions / month", "1 editorial report / month"],
   },
   author: {
     id: "author",
@@ -39,7 +42,8 @@ export const PLANS: Record<PlanId, Plan> = {
     maxManuscriptWords: 150_000,
     monthlyAnalysisWords: 200_000,
     monthlyQuestions: 300,
-    features: ["3 books up to 150,000 words", "200,000 newly analyzed words / month", "Re-analyze unchanged chapters free", "300 Ask Your Book questions / month", "Full consistency, plot & pacing reports"],
+    monthlyReports: 3,
+    features: ["3 books up to 150,000 words", "200,000 newly analyzed words / month", "Re-analyze unchanged chapters free", "300 Ask Your Book questions / month", "3 editorial reports / month", "Full consistency, plot & pacing reports"],
   },
   pro: {
     id: "pro",
@@ -51,7 +55,8 @@ export const PLANS: Record<PlanId, Plan> = {
     maxManuscriptWords: 300_000,
     monthlyAnalysisWords: 750_000,
     monthlyQuestions: 1500,
-    features: ["Unlimited books up to 300,000 words", "750,000 newly analyzed words / month", "1,500 Ask Your Book questions / month", "Priority analysis queue", "Everything in Author"],
+    monthlyReports: 10,
+    features: ["Unlimited books up to 300,000 words", "750,000 newly analyzed words / month", "1,500 Ask Your Book questions / month", "10 editorial reports / month", "Priority analysis queue", "Everything in Author"],
   },
   studio: {
     id: "studio",
@@ -63,7 +68,8 @@ export const PLANS: Record<PlanId, Plan> = {
     maxManuscriptWords: 300_000,
     monthlyAnalysisWords: 2_500_000,
     monthlyQuestions: 5000,
-    features: ["2.5M newly analyzed words / month", "5,000 questions / month", "Client workspaces (coming soon)", "Everything in Pro"],
+    monthlyReports: 25,
+    features: ["2.5M newly analyzed words / month", "5,000 questions / month", "25 editorial reports / month", "Client workspaces (coming soon)", "Everything in Pro"],
   },
 };
 

@@ -77,25 +77,28 @@ async function callOnce<S extends z.ZodType>(call: StructuredCall<S>): Promise<{
   const model = MODELS[call.tier];
   const reasoning = call.tier === "reasoning";
 
-  const response = await anthropic().beta.messages.parse({
-    model,
-    max_tokens: call.maxTokens ?? 16000,
-    system: [{ type: "text", text: call.system, cache_control: { type: "ephemeral" } }],
-    messages: [{ role: "user", content: call.user }],
-    output_config: {
-      format: betaZodOutputFormat(call.schema),
-      ...(reasoning ? { effort: call.effort ?? "medium" } : {}),
-    },
-    ...(reasoning
-      ? {
-          thinking: { type: "adaptive" as const },
-          // Re-run on Anthropic's recommended model if a safety classifier declines
-          // (e.g. a thriller manuscript with violent scenes).
-          betas: ["server-side-fallback-2026-07-01"],
-          fallbacks: "default" as const,
-        }
-      : {}),
-  });
+  // Streamed so long inputs (whole-manuscript reports) never hit HTTP timeouts.
+  const response = await anthropic()
+    .beta.messages.stream({
+      model,
+      max_tokens: call.maxTokens ?? 16000,
+      system: [{ type: "text", text: call.system, cache_control: { type: "ephemeral" } }],
+      messages: [{ role: "user", content: call.user }],
+      output_config: {
+        format: betaZodOutputFormat(call.schema),
+        ...(reasoning ? { effort: call.effort ?? "medium" } : {}),
+      },
+      ...(reasoning
+        ? {
+            thinking: { type: "adaptive" as const },
+            // Re-run on Anthropic's recommended model if a safety classifier declines
+            // (e.g. a thriller manuscript with violent scenes).
+            betas: ["server-side-fallback-2026-07-01"],
+            fallbacks: "default" as const,
+          }
+        : {}),
+    })
+    .finalMessage();
 
   const usage = usageOf(response.model ?? model, response.usage);
 
